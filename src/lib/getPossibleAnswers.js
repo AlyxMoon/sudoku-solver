@@ -48,12 +48,10 @@ const isNumberInColumn = (num, i, cells) => {
 }
 
 const isNumberInBlock = (num, i, cells) => {
-  return false
-  // const block = getBlockOfCell(i)
-  // if (block === 4) console.log('I am a 4 boi', i, getRowOfCell(i), getColumnOfCell(i))
-  //
-  // if (i === 19) console.log('WOO!', num, i, block)
-  // return [0, 1, 2, 9, 10, 11, 18, 19, 20].some(c => {
-  //   return cells[(block * 3) + (Math.floor(block / 3) * 9) + c] === num
-  // })
+  const block = getBlockOfCell(i)
+
+  return [0, 1, 2, 9, 10, 11, 18, 19, 20].some(c => {
+    const offset = ((block % 3) * 3) + (Math.floor(block / 3) * 27)
+    return cells[offset + c] === num
+  })
 }
