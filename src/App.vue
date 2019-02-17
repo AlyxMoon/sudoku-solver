@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <h1>Sudoko Solver</h1>
-    <div>
+    <div class="app-options">
       <div>Show possible answers in cells</div>
 
       <label for="showPossibleAnswers-false">No</label>
@@ -82,6 +82,12 @@ export default {
 </script>
 
 <style>
+#app {
+  margin-left: auto;
+  margin-right: auto;
+  width: 30rem;
+}
+
 h1 {
   text-align: center;
 }
@@ -95,9 +101,9 @@ h1 {
   grid-template-columns: repeat(9, 1fr);
   grid-template-rows: repeat(9, 1fr);
   height: 30rem;
-  margin: 4rem auto;
+  margin: 1rem auto;
   position: relative;
-  width: 30rem;
+  width: 100%;
 }
 
 .cell {
