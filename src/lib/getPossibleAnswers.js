@@ -32,6 +32,25 @@ export const getBlockOfCell = i => {
   return (Math.floor(row / 3) * 3) + Math.floor(column / 3)
 }
 
+export const getIndexesOfNumInRow = (num, row, cells) => {
+  return [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    .map(c => row * 9 + c)
+    .filter(c => cells[c] === num)
+}
+
+export const getCountOfNumInColumn = (num, column, cells) => {
+  return [0, 1, 2, 3, 4, 5, 6, 7, 8].reduce((sum, c) => {
+    return cells[c * 9 + column] === num ? sum + 1 : sum
+  }, 0)
+}
+
+export const getCountOfNumInBlock = (num, block, cells) => {
+  return [0, 1, 2, 9, 10, 11, 18, 19, 20].some(c => {
+    const offset = ((block % 3) * 3) + (Math.floor(block / 3) * 27)
+    return cells[offset + c] === num
+  })
+}
+
 const isNumberInRow = (num, i, cells) => {
   const row = getRowOfCell(i)
   return [0, 1, 2, 3, 4, 5, 6, 7, 8].some(c => {
