@@ -2,7 +2,12 @@
   <div id="app">
     <h1>Sudoko Solver</h1>
     <div class="grid">
-      <div class="cell" v-for="i in 81"></div>
+      <div
+        v-for="i in 81" :key="'cell-' + i"
+        class="cell" :class="{ selected: (i - 1) === activeCell }"
+        @click="setCellActive(i - 1)">
+        {{ cells[i - 1] || '' }}
+      </div>
 
       <div class="grid-divider col-1"></div>
       <div class="grid-divider col-2"></div>
@@ -14,7 +19,34 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  data () {
+    return {
+      activeCell: null,
+      cells: Array.apply(null, Array(81)).map(() => {})
+    }
+  },
+  created () {
+    window.addEventListener('keyup', e => {
+      if (this.activeCell) {
+        if (!isNaN(e.key)) {
+          this.cells.splice(this.activeCell, 1, Number(e.key))
+          this.activeCell = null
+        }
+      }
+    })
+  },
+  methods: {
+    setCellActive: function (i) {
+      if (i < 0 || i >= this.cells.length) return
+
+      if (this.activeCell === i) {
+        this.activeCell = null
+      } else {
+        this.activeCell = i
+      }
+    }
+  }
 }
 </script>
 
@@ -39,8 +71,22 @@ h1 {
 
 .cell {
   background-color: #EEEEEE;
+  cursor: pointer;
   height: 100%;
+  user-select: none;
   width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+}
+.cell:hover {
+  background-color: pink;
+}
+.cell.selected {
+  background-color: yellow;
 }
 
 .grid-divider {
