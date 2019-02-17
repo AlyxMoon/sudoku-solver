@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import getPossibleAnswers from '@/lib/getPossibleAnswers'
+import { getPossibleAnswers } from '@/lib/getPossibleAnswers'
 
 export default {
   name: 'App',

@@ -1,6 +1,6 @@
-export default (cells) => {
+export const getPossibleAnswers = cells => {
   if (!cells || !Array.isArray(cells) || cells.length !== 81) {
-    return Array.apply(null, Array(87)).map(() => {})
+    return Array.apply(null, Array(81)).map(() => {})
   }
 
   return cells.map((cell, i) => {
@@ -19,13 +19,13 @@ export default (cells) => {
   })
 }
 
-const getRowOfCell = i => {
+export const getRowOfCell = i => {
   return Math.floor(i / 9)
 }
-const getColumnOfCell = i => {
+export const getColumnOfCell = i => {
   return i % 9
 }
-const getBlockOfCell = i => {
+export const getBlockOfCell = i => {
   const row = getRowOfCell(i)
   const column = getColumnOfCell(i)
 
