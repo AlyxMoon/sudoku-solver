@@ -16,7 +16,7 @@
         class="cell" :class="{ selected: (i - 1) === activeCell }"
         @click="setCellActive(i - 1)">
         <span v-if="cells[i - 1]">{{ cells[i - 1] }}</span>
-        <div v-if="showPossibleAnswers && !cells[i - 1]"
+        <div v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'object'"
           class="cell-answers-wrapper">
           <span>{{ possibleAnswers[i - 1][1] ? 1 : '' }}</span>
           <span>{{ possibleAnswers[i - 1][2] ? 2 : '' }}</span>
@@ -27,6 +27,9 @@
           <span>{{ possibleAnswers[i - 1][7] ? 7 : '' }}</span>
           <span>{{ possibleAnswers[i - 1][8] ? 8 : '' }}</span>
           <span>{{ possibleAnswers[i - 1][9] ? 9 : '' }}</span>
+        </div>
+        <div v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'number'">
+          {{ possibleAnswers[i - 1] }}
         </div>
       </div>
 

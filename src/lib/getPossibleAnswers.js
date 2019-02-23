@@ -5,16 +5,32 @@ export const getPossibleAnswers = cells => {
 
   return cells.map((cell, i) => {
     if (cell) return null
-    return {
-      1: !isNumberInRow(1, i, cells) && !isNumberInColumn(1, i, cells) && !isNumberInBlock(1, i, cells),
-      2: !isNumberInRow(2, i, cells) && !isNumberInColumn(2, i, cells) && !isNumberInBlock(2, i, cells),
-      3: !isNumberInRow(3, i, cells) && !isNumberInColumn(3, i, cells) && !isNumberInBlock(3, i, cells),
-      4: !isNumberInRow(4, i, cells) && !isNumberInColumn(4, i, cells) && !isNumberInBlock(4, i, cells),
-      5: !isNumberInRow(5, i, cells) && !isNumberInColumn(5, i, cells) && !isNumberInBlock(5, i, cells),
-      6: !isNumberInRow(6, i, cells) && !isNumberInColumn(6, i, cells) && !isNumberInBlock(6, i, cells),
-      7: !isNumberInRow(7, i, cells) && !isNumberInColumn(7, i, cells) && !isNumberInBlock(7, i, cells),
-      8: !isNumberInRow(8, i, cells) && !isNumberInColumn(8, i, cells) && !isNumberInBlock(8, i, cells),
-      9: !isNumberInRow(9, i, cells) && !isNumberInColumn(9, i, cells) && !isNumberInBlock(9, i, cells)
+
+    const possibles = [
+      !isNumberInRow(1, i, cells) && !isNumberInColumn(1, i, cells) && !isNumberInBlock(1, i, cells),
+      !isNumberInRow(2, i, cells) && !isNumberInColumn(2, i, cells) && !isNumberInBlock(2, i, cells),
+      !isNumberInRow(3, i, cells) && !isNumberInColumn(3, i, cells) && !isNumberInBlock(3, i, cells),
+      !isNumberInRow(4, i, cells) && !isNumberInColumn(4, i, cells) && !isNumberInBlock(4, i, cells),
+      !isNumberInRow(5, i, cells) && !isNumberInColumn(5, i, cells) && !isNumberInBlock(5, i, cells),
+      !isNumberInRow(6, i, cells) && !isNumberInColumn(6, i, cells) && !isNumberInBlock(6, i, cells),
+      !isNumberInRow(7, i, cells) && !isNumberInColumn(7, i, cells) && !isNumberInBlock(7, i, cells),
+      !isNumberInRow(8, i, cells) && !isNumberInColumn(8, i, cells) && !isNumberInBlock(8, i, cells),
+      !isNumberInRow(9, i, cells) && !isNumberInColumn(9, i, cells) && !isNumberInBlock(9, i, cells)
+    ]
+    if (possibles.reduce((count, possible) => count + (possible ? 1 : 0), 0) === 1) {
+      return possibles.findIndex(possible => possible) + 1
+    } else {
+      return {
+        1: possibles[0],
+        2: possibles[1],
+        3: possibles[2],
+        4: possibles[3],
+        5: possibles[4],
+        6: possibles[5],
+        7: possibles[6],
+        8: possibles[7],
+        9: possibles[8]
+      }
     }
   })
 }
