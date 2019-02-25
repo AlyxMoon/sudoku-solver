@@ -28,7 +28,7 @@
           <span>{{ possibleAnswers[i - 1][8] ? 8 : '' }}</span>
           <span>{{ possibleAnswers[i - 1][9] ? 9 : '' }}</span>
         </div>
-        <div v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'number'">
+        <div class="auto-answers" v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'number'">
           {{ possibleAnswers[i - 1] }}
         </div>
       </div>
@@ -172,6 +172,10 @@ h1 {
 }
 .grid-divider.row-2 {
   bottom: 33%;
+}
+
+.auto-answers {
+  color: turquoise;
 }
 
 </style>
