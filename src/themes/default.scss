@@ -1,0 +1,39 @@
+
+.grid {
+  background-color: black;
+  box-shadow: 6px 6px 10px 6px black;
+  border-color: black;
+}
+
+.grid-divider {
+  background-color: black;
+}
+
+.cell {
+  background-color: #EEEEEE;
+
+  &:hover {
+    background-color: pink;
+  }
+  &.selected {
+    background-color: yellow;
+  }
+}
+
+ul.inline {
+  background-color: grey;
+  color: white;
+
+  li.list-option {
+    border-color: white;
+
+    &.active {
+      background-color: black;
+      color: white;
+    }
+  }
+}
+
+.auto-answers {
+  color: turquoise;
+}

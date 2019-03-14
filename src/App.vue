@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :class="'theme-' + theme">
     <h1>Sudoko Solver</h1>
     <div class="app-options">
       <div>Show possible answers in cells</div>
@@ -10,6 +10,20 @@
       <label for="showPossibleAnswers-true">Yes</label>
       <input type="radio" name="showPossibleAnswers" id="showPossibleAnswers-false"
         :value="true" v-model.lazy="showPossibleAnswers" />
+
+      <div>
+        <ul class="inline">
+          <li>Theme:</li>
+          <li
+            :class="['list-option', { active: theme === 'default'}]"
+            @click="theme = 'default'"
+            >Default</li>
+          <li
+            :class="['list-option', { active: theme === 'other' }]"
+            @click="theme = 'other'"
+            >Other</li>
+        </ul>
+      </div>
     </div>
     <div class="grid">
       <div v-for="i in 81" :key="'cell-' + i"
@@ -51,7 +65,8 @@ export default {
       activeCell: null,
       cells: Array.apply(null, Array(81)).map(() => {}),
       possibleAnswers: null,
-      showPossibleAnswers: false
+      showPossibleAnswers: false,
+      theme: 'default'
     }
   },
   created () {
@@ -84,7 +99,8 @@ export default {
 }
 </script>
 
-<style>
+<!-- Core styling  -->
+<style lang="scss">
 #app {
   margin-left: auto;
   margin-right: auto;
@@ -96,9 +112,8 @@ h1 {
 }
 
 .grid {
-  background-color: black;
-  box-shadow: 6px 6px 10px 6px black;
-  border: 4px solid black;
+  border-style: solid;
+  border-width: 4px solid;
   display: grid;
   grid-gap: 1px;
   grid-template-columns: repeat(9, 1fr);
@@ -110,7 +125,6 @@ h1 {
 }
 
 .cell {
-  background-color: #EEEEEE;
   cursor: pointer;
   height: 100%;
   user-select: none;
@@ -121,12 +135,6 @@ h1 {
   justify-content: center;
   font-size: 2rem;
   font-weight: bold;
-}
-.cell:hover {
-  background-color: pink;
-}
-.cell.selected {
-  background-color: yellow;
 }
 
 .cell-answers-wrapper {
@@ -148,9 +156,9 @@ h1 {
 }
 
 .grid-divider {
-  background-color: black;
   position: absolute;
 }
+
 .grid-divider[class *= 'col-'] {
   top: 0;
   bottom: 0;
@@ -174,8 +182,33 @@ h1 {
   bottom: 33%;
 }
 
-.auto-answers {
-  color: turquoise;
+ul.inline {
+  margin-top: 10px;
+  list-style: none;
+  padding: 5px;
+
+  li {
+    display: inline-block;
+    margin: 0 0 0 -5px;
+    padding: 0 5px;
+
+    &.list-option {
+      border-style: solid;
+      border-width: 0 1px 0 1px;
+      cursor: pointer;
+    }
+  }
 }
 
+</style>
+
+<!-- Conditional theme styles -->
+<style lang="scss">
+  .theme-default {
+    @import './themes/default.scss';
+  }
+
+  .theme-other {
+    @import './themes/other.scss';
+  }
 </style>
