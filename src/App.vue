@@ -1,6 +1,6 @@
 <template>
   <div id="app" :class="'theme-' + theme">
-    <h1>Sudoko Solver</h1>
+    <h1>Sudoku Solver</h1>
     <div class="app-options">
       <div>Show possible answers in cells</div>
 
