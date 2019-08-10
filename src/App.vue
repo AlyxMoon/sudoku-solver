@@ -1,37 +1,42 @@
 <template>
-  <div id="app" :class="'theme-' + theme">
+  <div id="app" :class="'theme-' + options.theme">
     <h1>Sudoku Solver</h1>
     <div class="app-options">
       <div>Show possible answers in cells</div>
 
       <label for="showPossibleAnswers-false">No</label>
-      <input type="radio" name="showPossibleAnswers" id="showPossibleAnswers-true"
-        :value="false" v-model.lazy="showPossibleAnswers" />
+      <input  type="radio" name="showPossibleAnswers" id="showPossibleAnswers-true"
+              :value="false" v-model.lazy="showPossibleAnswers" />
       <label for="showPossibleAnswers-true">Yes</label>
-      <input type="radio" name="showPossibleAnswers" id="showPossibleAnswers-false"
-        :value="true" v-model.lazy="showPossibleAnswers" />
+      <input  type="radio" name="showPossibleAnswers" id="showPossibleAnswers-false"
+              :value="true" v-model.lazy="showPossibleAnswers" />
 
       <div>
         <ul class="inline">
           <li>Theme:</li>
-          <li
-            :class="['list-option', { active: theme === 'default'}]"
-            @click="theme = 'default'"
-            >Default</li>
-          <li
-            :class="['list-option', { active: theme === 'other' }]"
-            @click="theme = 'other'"
-            >Other</li>
+          <li :class="['list-option', { active: options.theme === 'default'}]"
+              @click="setOption({ option: 'theme', value: 'default' })">
+              Default
+          </li>
+          <li :class="['list-option', { active: options.theme === 'other' }]"
+              @click="setOption({ option: 'theme', value: 'other' })">
+              Other
+          </li>
         </ul>
       </div>
+
+      <div class="commands">
+        <button @click="solve()">Solve</button>
+      </div>
     </div>
+
     <div class="grid">
-      <div v-for="i in 81" :key="'cell-' + i"
-        class="cell" :class="{ selected: (i - 1) === activeCell }"
-        @click="setCellActive(i - 1)">
+      <div  v-for="i in 81" :key="'cell-' + i"
+            class="cell" :class="{ selected: (i - 1) === activeCell }"
+            @click="setActiveCell(i - 1)">
         <span v-if="cells[i - 1]">{{ cells[i - 1] }}</span>
-        <div v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'object'"
-          class="cell-answers-wrapper">
+        <div  v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'object'"
+              class="cell-answers-wrapper">
           <span>{{ possibleAnswers[i - 1][1] ? 1 : '' }}</span>
           <span>{{ possibleAnswers[i - 1][2] ? 2 : '' }}</span>
           <span>{{ possibleAnswers[i - 1][3] ? 3 : '' }}</span>
@@ -56,45 +61,36 @@
 </template>
 
 <script>
-import { getPossibleAnswers } from '@/lib/getPossibleAnswers'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'App',
-  data () {
-    return {
-      activeCell: null,
-      cells: Array.apply(null, Array(81)).map(() => {}),
-      possibleAnswers: null,
-      showPossibleAnswers: false,
-      theme: 'default'
-    }
-  },
-  created () {
-    this.updatePossibleAnswers()
-    window.addEventListener('keyup', e => {
-      if (!isNaN(this.activeCell) && this.activeCell !== null) {
-        if (!isNaN(e.key)) {
-          this.cells.splice(this.activeCell, 1, Number(e.key))
-          this.activeCell = null
-          this.updatePossibleAnswers()
-        }
-      }
-    })
-  },
-  methods: {
-    setCellActive: function (i) {
-      if (i < 0 || i >= this.cells.length) return
 
-      if (this.activeCell === i) {
-        this.activeCell = null
-      } else {
-        this.activeCell = i
-      }
-    },
-    updatePossibleAnswers: function () {
-      if (!this.possibleAnswers) this.possibleAnswers = []
-      this.possibleAnswers.splice(0, 81, ...getPossibleAnswers(this.cells))
+  computed: {
+    ...mapState({
+      activeCell: state => state.activeCell,
+      cells: state => state.cells,
+      possibleAnswers: state => state.possibleAnswers,
+
+      options: state => state.options,
+
+      solving: state => state.solving
+    }),
+    showPossibleAnswers: {
+      set (value) {
+        this.setOption({ option: 'showPossibleAnswers', value })
+      },
+      get () { return this.options.showPossibleAnswers }
     }
+  },
+
+  created () {
+    this.$store.dispatch('updatePossibleAnswers')
+    window.addEventListener('keyup', e => this.updateCell(Number(e.key)))
+  },
+
+  methods: {
+    ...mapActions(['setActiveCell', 'setOption', 'solve', 'updateCell', 'updatePossibleAnswers'])
   }
 }
 </script>
@@ -109,6 +105,10 @@ export default {
 
 h1 {
   text-align: center;
+}
+
+.commands {
+
 }
 
 .grid {
