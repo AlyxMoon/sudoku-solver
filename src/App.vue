@@ -26,31 +26,49 @@
       </div>
 
       <div class="commands">
-        <button @click="solve()">Solve</button>
+        <button v-if="!solving" @click="solve()">Solve</button>
+        <button v-if="solving" @click="stop()">Stop Solving</button>
+
+        <button v-if="solving && !finishedSolving" @click="togglePause()">
+          {{ pauseAlgorithm ? 'Resume Algorithm' : 'Pause Algorithm' }}
+        </button>
+
+        <span v-if="solving && !finishedSolving">Currently solving...</span>
+        <span v-if="solving && finishedSolving">Finished solving!</span>
       </div>
     </div>
 
     <div class="grid">
-      <div  v-for="i in 81" :key="'cell-' + i"
-            class="cell" :class="{ selected: (i - 1) === activeCell }"
-            @click="setActiveCell(i - 1)">
-        <span v-if="cells[i - 1]">{{ cells[i - 1] }}</span>
-        <div  v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'object'"
-              class="cell-answers-wrapper">
-          <span>{{ possibleAnswers[i - 1][1] ? 1 : '' }}</span>
-          <span>{{ possibleAnswers[i - 1][2] ? 2 : '' }}</span>
-          <span>{{ possibleAnswers[i - 1][3] ? 3 : '' }}</span>
-          <span>{{ possibleAnswers[i - 1][4] ? 4 : '' }}</span>
-          <span>{{ possibleAnswers[i - 1][5] ? 5 : '' }}</span>
-          <span>{{ possibleAnswers[i - 1][6] ? 6 : '' }}</span>
-          <span>{{ possibleAnswers[i - 1][7] ? 7 : '' }}</span>
-          <span>{{ possibleAnswers[i - 1][8] ? 8 : '' }}</span>
-          <span>{{ possibleAnswers[i - 1][9] ? 9 : '' }}</span>
+      <template v-if="!solving">
+        <div  v-for="i in 81" :key="'cell-' + i"
+              class="cell" :class="{ selected: (i - 1) === activeCell }"
+              @click="setActiveCell(i - 1)">
+          <span v-if="cells[i - 1]">{{ cells[i - 1] }}</span>
+          <div  v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'object'"
+                class="cell-answers-wrapper">
+            <span>{{ possibleAnswers[i - 1][1] ? 1 : '' }}</span>
+            <span>{{ possibleAnswers[i - 1][2] ? 2 : '' }}</span>
+            <span>{{ possibleAnswers[i - 1][3] ? 3 : '' }}</span>
+            <span>{{ possibleAnswers[i - 1][4] ? 4 : '' }}</span>
+            <span>{{ possibleAnswers[i - 1][5] ? 5 : '' }}</span>
+            <span>{{ possibleAnswers[i - 1][6] ? 6 : '' }}</span>
+            <span>{{ possibleAnswers[i - 1][7] ? 7 : '' }}</span>
+            <span>{{ possibleAnswers[i - 1][8] ? 8 : '' }}</span>
+            <span>{{ possibleAnswers[i - 1][9] ? 9 : '' }}</span>
+          </div>
+          <div  v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'number'"
+                class="auto-answers">
+                {{ possibleAnswers[i - 1] }}
+          </div>
         </div>
-        <div class="auto-answers" v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'number'">
-          {{ possibleAnswers[i - 1] }}
+      </template>
+
+      <template v-else>
+        <div v-for="i in 81" :key="'cell-' + i" class="cell">
+          <span v-if="cells[i - 1]">{{ cells[i - 1] }}</span>
+          <span v-else-if="computedCells[i - 1]" class="auto-answers">{{ computedCells[i - 1] }}</span>
         </div>
-      </div>
+      </template>
 
       <div class="grid-divider col-1"></div>
       <div class="grid-divider col-2"></div>
@@ -71,10 +89,13 @@ export default {
       activeCell: state => state.activeCell,
       cells: state => state.cells,
       possibleAnswers: state => state.possibleAnswers,
+      computedCells: state => state.computedCells,
 
       options: state => state.options,
 
-      solving: state => state.solving
+      solving: state => state.solving,
+      finishedSolving: state => state.finishedSolving,
+      pauseAlgorithm: state => state.pauseAlgorithm
     }),
     showPossibleAnswers: {
       set (value) {
@@ -90,7 +111,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['setActiveCell', 'setOption', 'solve', 'updateCell', 'updatePossibleAnswers'])
+    ...mapActions(['setActiveCell', 'setOption', 'solve', 'stop', 'togglePause', 'updateCell', 'updatePossibleAnswers'])
   }
 }
 </script>

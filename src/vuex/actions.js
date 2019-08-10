@@ -1,3 +1,4 @@
+import { isNumberValidInCell } from '@/lib'
 
 export const setOption = (context, payload) => {
   if (payload.option === 'theme') {
@@ -7,14 +8,6 @@ export const setOption = (context, payload) => {
   }
 
   context.commit('SET_OPTION', payload)
-}
-
-export const solve = (context) => {
-  context.commit('BEGIN_SOLVING')
-
-  if (context.state.solveMode === 'brute') {
-    context.dispatch('solveByBruteForce')
-  }
 }
 
 export const setActiveCell = (context, cell) => {
@@ -41,75 +34,19 @@ export const updatePossibleAnswers = (context) => {
     context.commit('SET_POSSIBLE_ANSWERS', { cells: Array.apply(null, Array(81)).map(() => {}) })
   }
 
-  const getRowOfCell = i => {
-    return Math.floor(i / 9)
-  }
-  const getColumnOfCell = i => {
-    return i % 9
-  }
-  const getBlockOfCell = i => {
-    const row = getRowOfCell(i)
-    const column = getColumnOfCell(i)
-
-    return (Math.floor(row / 3) * 3) + Math.floor(column / 3)
-  }
-
-  // const getIndexesOfNumInRow = (num, row, cells) => {
-  //   return [0, 1, 2, 3, 4, 5, 6, 7, 8]
-  //     .map(c => row * 9 + c)
-  //     .filter(c => cells[c] === num)
-  // }
-
-  // const getCountOfNumInColumn = (num, column, cells) => {
-  //   return [0, 1, 2, 3, 4, 5, 6, 7, 8].reduce((sum, c) => {
-  //     return cells[c * 9 + column] === num ? sum + 1 : sum
-  //   }, 0)
-  // }
-
-  // const getCountOfNumInBlock = (num, block, cells) => {
-  //   return [0, 1, 2, 9, 10, 11, 18, 19, 20].some(c => {
-  //     const offset = ((block % 3) * 3) + (Math.floor(block / 3) * 27)
-  //     return cells[offset + c] === num
-  //   })
-  // }
-
-  const isNumberInRow = (num, i, cells) => {
-    const row = getRowOfCell(i)
-    return [0, 1, 2, 3, 4, 5, 6, 7, 8].some(c => {
-      return cells[row * 9 + c] === num
-    })
-  }
-
-  const isNumberInColumn = (num, i, cells) => {
-    const column = getColumnOfCell(i)
-
-    return [0, 1, 2, 3, 4, 5, 6, 7, 8].some(c => {
-      return cells[c * 9 + column] === num
-    })
-  }
-
-  const isNumberInBlock = (num, i, cells) => {
-    const block = getBlockOfCell(i)
-
-    return [0, 1, 2, 9, 10, 11, 18, 19, 20].some(c => {
-      const offset = ((block % 3) * 3) + (Math.floor(block / 3) * 27)
-      return cells[offset + c] === num
-    })
-  }
-
   context.commit('SET_POSSIBLE_ANSWERS', { cells: cells.map((cell, i) => {
     if (cell) return null
 
     const possibles = [
-      !isNumberInRow(1, i, cells) && !isNumberInColumn(1, i, cells) && !isNumberInBlock(1, i, cells),
-      !isNumberInRow(2, i, cells) && !isNumberInColumn(2, i, cells) && !isNumberInBlock(2, i, cells),
-      !isNumberInRow(3, i, cells) && !isNumberInColumn(3, i, cells) && !isNumberInBlock(3, i, cells),
-      !isNumberInRow(4, i, cells) && !isNumberInColumn(4, i, cells) && !isNumberInBlock(4, i, cells),
-      !isNumberInRow(5, i, cells) && !isNumberInColumn(5, i, cells) && !isNumberInBlock(5, i, cells),
-      !isNumberInRow(6, i, cells) && !isNumberInColumn(6, i, cells) && !isNumberInBlock(6, i, cells),
-      !isNumberInRow(7, i, cells) && !isNumberInColumn(7, i, cells) && !isNumberInBlock(7, i, cells),
-      !isNumberInRow(8, i, cells) && !isNumberInColumn(8, i, cells) && !isNumberInBlock(8, i, cells),
-      !isNumberInRow(9, i, cells) && !isNumberInColumn(9, i, cells) && !isNumberInBlock(9, i, cells)
+      isNumberValidInCell(1, i, cells),
+      isNumberValidInCell(2, i, cells),
+      isNumberValidInCell(3, i, cells),
+      isNumberValidInCell(4, i, cells),
+      isNumberValidInCell(5, i, cells),
+      isNumberValidInCell(6, i, cells),
+      isNumberValidInCell(7, i, cells),
+      isNumberValidInCell(8, i, cells),
+      isNumberValidInCell(9, i, cells)
     ]
     if (possibles.reduce((count, possible) => count + (possible ? 1 : 0), 0) === 1) {
       return possibles.findIndex(possible => possible) + 1
@@ -129,6 +66,54 @@ export const updatePossibleAnswers = (context) => {
   }) })
 }
 
+export const solve = (context) => {
+  context.commit('BEGIN_SOLVING')
+
+  if (context.state.options.solveMode === 'brute') {
+    context.dispatch('solveByBruteForce')
+  }
+}
+
+export const stop = (context) => {
+  context.commit('CANCEL_SOLVING')
+}
+
+export const togglePause = (context) => {
+  if (context.state.pauseAlgorithm) {
+    context.commit('RESUME_ALGORITHM')
+  } else {
+    context.commit('PAUSE_ALGORITHM')
+  }
+}
+
 export const solveByBruteForce = (context) => {
-  return null
+  context.commit('SET_COMPUTED_CELLS', { cells: context.state.cells.slice() })
+
+  let cell = 0
+  let diff = 1
+  let timer = window.setInterval(() => {
+    if (context.state.pauseAlgorithm) return
+    while (cell > 0 && cell < 81 && context.state.cells[cell]) {
+      cell += diff
+    }
+
+    if (cell < 0 || cell >= 81 || context.state.solving === false) {
+      window.clearInterval(timer)
+      context.commit('FINISHED_SOLVING')
+    }
+
+    let start = context.state.computedCells[cell] || 1
+    for (let i = start; i <= 9; i++) {
+      if (isNumberValidInCell(i, cell, context.state.computedCells)) {
+        context.commit('UPDATE_COMPUTED_CELL', { cell, num: i })
+        diff = 1
+        break
+      } else if (i === 9) {
+        context.commit('UPDATE_COMPUTED_CELL', { cell, num: null })
+        diff = -1
+      }
+    }
+
+    cell += diff
+  }, 20)
 }

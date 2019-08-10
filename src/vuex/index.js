@@ -5,13 +5,16 @@ const state = {
   activeCell: null,
   cells: Array.apply(null, Array(81)).map(() => {}),
   possibleAnswers: Array.apply(null, Array(81)).map(() => {}),
+  computedCells: Array.apply(null, Array(81)).map(() => {}),
 
   solving: false,
-  solveMode: 'brute',
+  finishedSolving: false,
+  pauseAlgorithm: false,
 
   allowedThemes: ['default', 'other'],
   options: {
     showPossibleAnswers: false,
+    solveMode: 'brute',
     theme: 'default'
   }
 }
