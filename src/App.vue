@@ -26,15 +26,19 @@
       </div>
 
       <div class="commands">
-        <button v-if="!solving" @click="solve()">Solve</button>
-        <button v-if="solving" @click="stop()">Stop Solving</button>
+        <template v-if="!solving">
+          <button @click="solve()">Solve</button>
+        </template>
+        <template v-if="solving">
+          <button @click="stop()">Stop Solving</button>
 
-        <button v-if="solving && !finishedSolving" @click="togglePause()">
-          {{ pauseAlgorithm ? 'Resume Algorithm' : 'Pause Algorithm' }}
-        </button>
-
-        <span v-if="solving && !finishedSolving">Currently solving...</span>
-        <span v-if="solving && finishedSolving">Finished solving!</span>
+          <button v-if="!finishedSolving" @click="togglePause()">
+            {{ pauseAlgorithm ? 'Resume Algorithm' : 'Pause Algorithm' }}
+          </button>
+          
+          <span v-if="!finishedSolving">Currently solving...</span>
+          <span v-if="finishedSolving">Finished solving!</span>
+        </template>
       </div>
     </div>
 
