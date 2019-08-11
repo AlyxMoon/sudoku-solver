@@ -35,7 +35,7 @@
           <button v-if="!finishedSolving" @click="togglePause()">
             {{ pauseAlgorithm ? 'Resume Algorithm' : 'Pause Algorithm' }}
           </button>
-          
+
           <span v-if="!finishedSolving">Currently solving...</span>
           <span v-if="finishedSolving">Finished solving!</span>
         </template>

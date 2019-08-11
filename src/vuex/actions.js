@@ -93,16 +93,18 @@ export const solveByBruteForce = (context) => {
   let diff = 1
   let timer = window.setInterval(() => {
     if (context.state.pauseAlgorithm) return
-    while (cell > 0 && cell < 81 && context.state.cells[cell]) {
+    while (cell >= 0 && cell < 81 && context.state.cells[cell]) {
       cell += diff
     }
 
+    console.log(cell, 'still solving')
     if (cell < 0 || cell >= 81 || context.state.solving === false) {
       window.clearInterval(timer)
       context.commit('FINISHED_SOLVING')
     }
 
     let start = context.state.computedCells[cell] || 1
+
     for (let i = start; i <= 9; i++) {
       if (isNumberValidInCell(i, cell, context.state.computedCells)) {
         context.commit('UPDATE_COMPUTED_CELL', { cell, num: i })
