@@ -1,26 +1,39 @@
 <template>
-  <div id="app" :class="'theme-' + options.theme">
+  <div
+    id="app"
+    :class="'theme-' + options.theme"
+  >
     <h1>Sudoku Solver</h1>
     <div class="app-options">
       <div>Show possible answers in cells</div>
 
       <label for="showPossibleAnswers-false">No</label>
-      <input  type="radio" name="showPossibleAnswers" id="showPossibleAnswers-true"
-              :value="false" v-model.lazy="showPossibleAnswers" />
+      <input
+        id="showPossibleAnswers-true"
+        :value="false"
+        v-model.lazy="showPossibleAnswers"
+        type="radio"
+        name="showPossibleAnswers" >
       <label for="showPossibleAnswers-true">Yes</label>
-      <input  type="radio" name="showPossibleAnswers" id="showPossibleAnswers-false"
-              :value="true" v-model.lazy="showPossibleAnswers" />
+      <input
+        id="showPossibleAnswers-false"
+        :value="true"
+        v-model.lazy="showPossibleAnswers"
+        type="radio"
+        name="showPossibleAnswers" >
 
       <div>
         <ul class="inline">
           <li>Theme:</li>
-          <li :class="['list-option', { active: options.theme === 'default'}]"
-              @click="setOption({ option: 'theme', value: 'default' })">
-              Default
+          <li
+            :class="['list-option', { active: options.theme === 'default'}]"
+            @click="setOption({ option: 'theme', value: 'default' })">
+            Default
           </li>
-          <li :class="['list-option', { active: options.theme === 'other' }]"
-              @click="setOption({ option: 'theme', value: 'other' })">
-              Other
+          <li
+            :class="['list-option', { active: options.theme === 'other' }]"
+            @click="setOption({ option: 'theme', value: 'other' })">
+            Other
           </li>
         </ul>
       </div>
@@ -32,7 +45,9 @@
         <template v-if="solving">
           <button @click="stop()">Stop Solving</button>
 
-          <button v-if="!finishedSolving" @click="togglePause()">
+          <button
+            v-if="!finishedSolving"
+            @click="togglePause()">
             {{ pauseAlgorithm ? 'Resume Algorithm' : 'Pause Algorithm' }}
           </button>
 
@@ -44,12 +59,16 @@
 
     <div class="grid">
       <template v-if="!solving">
-        <div  v-for="i in 81" :key="'cell-' + i"
-              class="cell" :class="{ selected: (i - 1) === activeCell }"
-              @click="setActiveCell(i - 1)">
+        <div
+          v-for="i in 81"
+          :key="'cell-' + i"
+          :class="{ selected: (i - 1) === activeCell }"
+          class="cell"
+          @click="setActiveCell(i - 1)">
           <span v-if="cells[i - 1]">{{ cells[i - 1] }}</span>
-          <div  v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'object'"
-                class="cell-answers-wrapper">
+          <div
+            v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'object'"
+            class="cell-answers-wrapper">
             <span>{{ possibleAnswers[i - 1][1] ? 1 : '' }}</span>
             <span>{{ possibleAnswers[i - 1][2] ? 2 : '' }}</span>
             <span>{{ possibleAnswers[i - 1][3] ? 3 : '' }}</span>
@@ -60,24 +79,30 @@
             <span>{{ possibleAnswers[i - 1][8] ? 8 : '' }}</span>
             <span>{{ possibleAnswers[i - 1][9] ? 9 : '' }}</span>
           </div>
-          <div  v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'number'"
-                class="auto-answers">
-                {{ possibleAnswers[i - 1] }}
+          <div
+            v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'number'"
+            class="auto-answers">
+            {{ possibleAnswers[i - 1] }}
           </div>
         </div>
       </template>
 
       <template v-else>
-        <div v-for="i in 81" :key="'cell-' + i" class="cell">
+        <div
+          v-for="i in 81"
+          :key="'cell-' + i"
+          class="cell">
           <span v-if="cells[i - 1]">{{ cells[i - 1] }}</span>
-          <span v-else-if="computedCells[i - 1]" class="auto-answers">{{ computedCells[i - 1] }}</span>
+          <span
+            v-else-if="computedCells[i - 1]"
+            class="auto-answers">{{ computedCells[i - 1] }}</span>
         </div>
       </template>
 
-      <div class="grid-divider col-1"></div>
-      <div class="grid-divider col-2"></div>
-      <div class="grid-divider row-1"></div>
-      <div class="grid-divider row-2"></div>
+      <div class="grid-divider col-1"/>
+      <div class="grid-divider col-2"/>
+      <div class="grid-divider row-1"/>
+      <div class="grid-divider row-2"/>
     </div>
   </div>
 </template>
@@ -133,7 +158,10 @@ h1 {
 }
 
 .commands {
-
+  & > * {
+    margin-left: 3px;
+    margin-right: 3px;
+  }
 }
 
 .grid {

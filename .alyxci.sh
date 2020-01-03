@@ -1,2 +1,2 @@
-yarn
+yarn install
 yarn run build
