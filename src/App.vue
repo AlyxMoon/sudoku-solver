@@ -6,23 +6,7 @@
     <h1>Sudoku Solver</h1>
 
     <div class="content">
-      <div class="commands">
-        <template v-if="!solving">
-          <button @click="solve()">Solve</button>
-        </template>
-        <template v-if="solving">
-          <button @click="stop()">Stop Solving</button>
-
-          <button
-            v-if="!finishedSolving"
-            @click="togglePause()">
-            {{ pauseAlgorithm ? 'Resume Algorithm' : 'Pause Algorithm' }}
-          </button>
-
-          <span v-if="!finishedSolving">Currently solving...</span>
-          <span v-if="finishedSolving">Finished solving!</span>
-        </template>
-      </div>
+      <MenuCommands />
 
       <div class="grid">
         <template v-if="!solving">
@@ -34,7 +18,7 @@
             @click="setActiveCell(i - 1)">
             <span v-if="cells[i - 1]">{{ cells[i - 1] }}</span>
             <div
-              v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'object'"
+              v-if="options.showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'object'"
               class="cell-answers-wrapper">
               <span>{{ possibleAnswers[i - 1][1] ? 1 : '' }}</span>
               <span>{{ possibleAnswers[i - 1][2] ? 2 : '' }}</span>
@@ -47,7 +31,7 @@
               <span>{{ possibleAnswers[i - 1][9] ? 9 : '' }}</span>
             </div>
             <div
-              v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'number'"
+              v-if="options.showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'number'"
               class="auto-number">
               {{ possibleAnswers[i - 1] }}
             </div>
@@ -72,40 +56,8 @@
         <div class="grid-divider row-2"/>
       </div>
 
-      <div class="themes">
-        <span>Themes</span>
-        <ul>
-          <li
-            :class="{ active: options.theme === 'default'}"
-            @click="setOption({ option: 'theme', value: 'default' })">
-            <span>Default</span>
-          </li>
-          <li
-            :class="{ active: options.theme === 'other' }"
-            @click="setOption({ option: 'theme', value: 'other' })">
-            <span>Other</span>
-          </li>
-        </ul>
-      </div>
-
-      <div class="options">
-        <div>Show possible answers in cells</div>
-
-        <label for="showPossibleAnswers-false">No</label>
-        <input
-          id="showPossibleAnswers-true"
-          :value="false"
-          v-model.lazy="showPossibleAnswers"
-          type="radio"
-          name="showPossibleAnswers" >
-        <label for="showPossibleAnswers-true">Yes</label>
-        <input
-          id="showPossibleAnswers-false"
-          :value="true"
-          v-model.lazy="showPossibleAnswers"
-          type="radio"
-          name="showPossibleAnswers" >
-      </div>
+      <MenuThemes />
+      <MenuOptions />
     </div>
   </div>
 </template>
@@ -113,28 +65,28 @@
 <script>
 import { mapActions, mapState } from 'vuex'
 
+import MenuCommands from './components/MenuCommands'
+import MenuOptions from './components/MenuOptions'
+import MenuThemes from './components/MenuThemes'
+
 export default {
   name: 'App',
+
+  components: {
+    MenuCommands,
+    MenuOptions,
+    MenuThemes,
+  },
 
   computed: {
     ...mapState({
       activeCell: state => state.activeCell,
       cells: state => state.cells,
-      possibleAnswers: state => state.possibleAnswers,
       computedCells: state => state.computedCells,
-
       options: state => state.options,
-
+      possibleAnswers: state => state.possibleAnswers,
       solving: state => state.solving,
-      finishedSolving: state => state.finishedSolving,
-      pauseAlgorithm: state => state.pauseAlgorithm
     }),
-    showPossibleAnswers: {
-      set (value) {
-        this.setOption({ option: 'showPossibleAnswers', value })
-      },
-      get () { return this.options.showPossibleAnswers }
-    }
   },
 
   created () {
@@ -143,33 +95,33 @@ export default {
   },
 
   methods: {
-    ...mapActions(['setActiveCell', 'setOption', 'solve', 'stop', 'togglePause', 'updateCell', 'updatePossibleAnswers'])
-  }
+    ...mapActions(['setActiveCell', 'setOption', 'updateCell', 'updatePossibleAnswers']),
+  },
 }
 </script>
 
-<!-- Core styling  -->
 <style lang="scss">
+@use 'scss/base_elementStyling';
+
 $grid-length: 30rem;
 
-html, body {
-  margin: 0;
-  height: 100vh;
-  font-size: 1.1rem;
-}
-
 #app {
-  box-sizing: border-box;
   height: 100%;
   overflow-y: auto;
   padding: 10px 0;
   width: 100%;
-}
 
-h1 {
-  font-size: 2.7rem;
-  margin-top: 0;
-  text-align: center;
+  &.theme-default {
+    @import './scss/themes/default';
+  }
+
+  &.theme-dim {
+    @import './scss/themes/dim';
+  }
+
+  &.theme-other {
+    @import './scss/themes/other';
+  }
 }
 
 .content {
@@ -178,7 +130,6 @@ h1 {
 }
 
 .grid {
-  box-sizing: border-box;
   display: grid;
   grid-gap: 1px;
   grid-template-columns: repeat(9, 1fr);
@@ -246,68 +197,4 @@ h1 {
     bottom: 33%;
   }
 }
-
-.themes {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  padding: 5px 8px;
-  position: relative;
-  width: 100%;
-
-  ul {
-    display: flex;
-    flex-direction: row;
-    list-style: none;
-    margin: 0;
-    padding-left: 15px;
-  }
-
-  li {
-    border-style: solid;
-    border-width: 0 0 0 1px;
-    cursor: pointer;
-    padding: 0 3px;
-
-    &:last-child {
-      border-right-width: 1px;
-    }
-  }
-}
-
-.options {
-  border-style: dotted;
-  border-width: 2px 0 0 0;
-  box-sizing: border-box;
-  padding: 5px 8px;
-  position: relative;
-  width: 100%;
-  z-index: 2;
-}
-
-.commands {
-  box-sizing: border-box;
-  padding: 5px 8px;
-  position: relative;
-  width: 100%;
-  z-index: 2;
-
-  & > * {
-    margin-left: 3px;
-    margin-right: 3px;
-  }
-}
-
-</style>
-
-<!-- Conditional theme styles -->
-<style lang="scss">
-  #app.theme-default {
-    @import './themes/default.scss';
-  }
-
-  #app.theme-other {
-    @import './themes/other.scss';
-  }
 </style>

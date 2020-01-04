@@ -52,5 +52,6 @@ export const SET_COMPUTED_CELLS = (state, payload) => {
 }
 
 export const UPDATE_COMPUTED_CELL = (state, payload) => {
+  console.log('updating the cell', payload)
   state.computedCells.splice(payload.cell, 1, payload.num)
 }

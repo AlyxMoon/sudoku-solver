@@ -2,7 +2,7 @@ import { isNumberValidInCell } from '@/lib'
 
 export const setOption = (context, payload) => {
   if (payload.option === 'theme') {
-    if (!context.state.allowedThemes.includes(payload.value)) {
+    if (!context.state.themes.includes(payload.value)) {
       payload.value = 'default'
     }
   }
@@ -46,7 +46,7 @@ export const updatePossibleAnswers = (context) => {
       isNumberValidInCell(6, i, cells),
       isNumberValidInCell(7, i, cells),
       isNumberValidInCell(8, i, cells),
-      isNumberValidInCell(9, i, cells)
+      isNumberValidInCell(9, i, cells),
     ]
     if (possibles.reduce((count, possible) => count + (possible ? 1 : 0), 0) === 1) {
       return possibles.findIndex(possible => possible) + 1
@@ -60,7 +60,7 @@ export const updatePossibleAnswers = (context) => {
         6: possibles[5],
         7: possibles[6],
         8: possibles[7],
-        9: possibles[8]
+        9: possibles[8],
       }
     }
   }) })
@@ -97,7 +97,6 @@ export const solveByBruteForce = (context) => {
       cell += diff
     }
 
-    console.log(cell, 'still solving')
     if (cell < 0 || cell >= 81 || context.state.solving === false) {
       window.clearInterval(timer)
       context.commit('FINISHED_SOLVING')

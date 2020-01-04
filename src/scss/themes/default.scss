@@ -1,22 +1,28 @@
 
-// These two act weird with linear gradient and do not work with !default to override. Don't do it
-$back-color: #3FB0AC;
-$back-color-secondary: #191E28BB;
+$back-color: #3FB0AC !default;
+$back-color-secondary: #191E28BB !default;
 
 $header-color: white !default;
 $header-shadow-color: black !default;
+
+$button-back-color: #DDDDDD !default;
+$button-border-color: transparent !default;
+$button-color: #222222 !default;
+$button-hover-back-color: #222222 !default;
+$button-hover-color: #DDDDDD !default;
+$button-hover-border-color: $back-color !default;
 
 $grid-color: #222222 !default;
 $grid-divider-color: #000000 !default;
 
 $cell-color: #CCCCCC !default;
-$cell-hover-color: #3FB0AC !default;
+$cell-hover-color: $back-color !default;
 $cell-select-color: #FFD47F !default;
 
-$cell-number-color: #222222 !default;
-$cell-number-auto-color: #3FB0AC !default;
+$cell-number-color: $grid-color !default;
+$cell-number-auto-color: $back-color !default;
 
-$menu-back-color: #222222 !default;
+$menu-back-color: $grid-color !default;
 $menu-color: #EEEEEE !default;
 $menu-border-color: transparent !default;
 $themes-border-color: white !default;
@@ -28,16 +34,31 @@ $options-color: $menu-color !default;
 $options-border-color: $themes-border-color !default;
 
 $commands-back-color: $menu-back-color !default;
-$commands-color: $menu-color;
+$commands-color: $menu-color !default;
 
+// Overriding variables does not play nicely with linear-gradient and will end up having every
+// theme use the same linear-gradient even with different back-colors
+// so need to manually set that in the style rather than using $back-color variable
 @at-root #app.theme-default {
-  background: linear-gradient(45deg, $back-color-secondary 40%, $back-color, $back-color-secondary 100%);
+  background: linear-gradient(45deg, $back-color-secondary 40%, #3FB0AC, $back-color-secondary 100%);;
   background-color: $back-color-secondary;
 }
 
 h1 {
   color: $header-color;
   text-shadow: 3px 3px 4px $header-shadow-color;
+}
+
+button {
+  background-color: $button-back-color;
+  border-color: $button-border-color;
+  color: $button-color;
+
+  &:hover {
+    background-color: $button-hover-back-color;
+    border-color: $button-hover-border-color;
+    color: $button-hover-color;
+  }
 }
 
 .grid {
@@ -83,12 +104,12 @@ h1 {
 .options {
   background-color: $options-back-color;
   border-color: $options-border-color;
-  box-shadow: 6px 2px 10px 8px $grid-color;
+  box-shadow: 6px 12px 10px 8px $grid-color;
   color: $options-color;
 }
 
 .commands {
-  background-color: $options-back-color;
-  box-shadow: 8px -7px 10px 6px $grid-color;
+  background-color: $commands-back-color;
+  box-shadow: 4px -10px 10px 10px $grid-color;
   color: $options-color;
 }

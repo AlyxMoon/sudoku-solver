@@ -1,0 +1,12 @@
+
+$back-color: #FFD47F;
+
+$cell-color: #FFFFFF;
+$cell-select-color: #3FB0AC;
+
+@import 'default';
+
+@at-root #app.theme-other {
+  background: linear-gradient(45deg, $back-color-secondary 40%, #FFD47F, $back-color-secondary 100%);
+  background-color: $back-color-secondary;
+}

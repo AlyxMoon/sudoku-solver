@@ -11,12 +11,12 @@ const state = {
   finishedSolving: false,
   pauseAlgorithm: false,
 
-  allowedThemes: ['default', 'other'],
+  themes: ['default', 'dim', 'other'],
   options: {
     showPossibleAnswers: false,
     solveMode: 'brute',
-    theme: 'default'
-  }
+    theme: 'default',
+  },
 }
 
 export { state, actions, mutations }
