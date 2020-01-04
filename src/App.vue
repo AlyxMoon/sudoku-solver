@@ -4,40 +4,8 @@
     :class="'theme-' + options.theme"
   >
     <h1>Sudoku Solver</h1>
-    <div class="app-options">
-      <div>Show possible answers in cells</div>
 
-      <label for="showPossibleAnswers-false">No</label>
-      <input
-        id="showPossibleAnswers-true"
-        :value="false"
-        v-model.lazy="showPossibleAnswers"
-        type="radio"
-        name="showPossibleAnswers" >
-      <label for="showPossibleAnswers-true">Yes</label>
-      <input
-        id="showPossibleAnswers-false"
-        :value="true"
-        v-model.lazy="showPossibleAnswers"
-        type="radio"
-        name="showPossibleAnswers" >
-
-      <div>
-        <ul class="inline">
-          <li>Theme:</li>
-          <li
-            :class="['list-option', { active: options.theme === 'default'}]"
-            @click="setOption({ option: 'theme', value: 'default' })">
-            Default
-          </li>
-          <li
-            :class="['list-option', { active: options.theme === 'other' }]"
-            @click="setOption({ option: 'theme', value: 'other' })">
-            Other
-          </li>
-        </ul>
-      </div>
-
+    <div class="content">
       <div class="commands">
         <template v-if="!solving">
           <button @click="solve()">Solve</button>
@@ -55,54 +23,89 @@
           <span v-if="finishedSolving">Finished solving!</span>
         </template>
       </div>
-    </div>
 
-    <div class="grid">
-      <template v-if="!solving">
-        <div
-          v-for="i in 81"
-          :key="'cell-' + i"
-          :class="{ selected: (i - 1) === activeCell }"
-          class="cell"
-          @click="setActiveCell(i - 1)">
-          <span v-if="cells[i - 1]">{{ cells[i - 1] }}</span>
+      <div class="grid">
+        <template v-if="!solving">
           <div
-            v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'object'"
-            class="cell-answers-wrapper">
-            <span>{{ possibleAnswers[i - 1][1] ? 1 : '' }}</span>
-            <span>{{ possibleAnswers[i - 1][2] ? 2 : '' }}</span>
-            <span>{{ possibleAnswers[i - 1][3] ? 3 : '' }}</span>
-            <span>{{ possibleAnswers[i - 1][4] ? 4 : '' }}</span>
-            <span>{{ possibleAnswers[i - 1][5] ? 5 : '' }}</span>
-            <span>{{ possibleAnswers[i - 1][6] ? 6 : '' }}</span>
-            <span>{{ possibleAnswers[i - 1][7] ? 7 : '' }}</span>
-            <span>{{ possibleAnswers[i - 1][8] ? 8 : '' }}</span>
-            <span>{{ possibleAnswers[i - 1][9] ? 9 : '' }}</span>
+            v-for="i in 81"
+            :key="'cell-' + i"
+            :class="{ selected: (i - 1) === activeCell }"
+            class="cell"
+            @click="setActiveCell(i - 1)">
+            <span v-if="cells[i - 1]">{{ cells[i - 1] }}</span>
+            <div
+              v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'object'"
+              class="cell-answers-wrapper">
+              <span>{{ possibleAnswers[i - 1][1] ? 1 : '' }}</span>
+              <span>{{ possibleAnswers[i - 1][2] ? 2 : '' }}</span>
+              <span>{{ possibleAnswers[i - 1][3] ? 3 : '' }}</span>
+              <span>{{ possibleAnswers[i - 1][4] ? 4 : '' }}</span>
+              <span>{{ possibleAnswers[i - 1][5] ? 5 : '' }}</span>
+              <span>{{ possibleAnswers[i - 1][6] ? 6 : '' }}</span>
+              <span>{{ possibleAnswers[i - 1][7] ? 7 : '' }}</span>
+              <span>{{ possibleAnswers[i - 1][8] ? 8 : '' }}</span>
+              <span>{{ possibleAnswers[i - 1][9] ? 9 : '' }}</span>
+            </div>
+            <div
+              v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'number'"
+              class="auto-number">
+              {{ possibleAnswers[i - 1] }}
+            </div>
           </div>
+        </template>
+
+        <template v-else>
           <div
-            v-if="showPossibleAnswers && !cells[i - 1] && typeof possibleAnswers[i - 1] === 'number'"
-            class="auto-answers">
-            {{ possibleAnswers[i - 1] }}
+            v-for="i in 81"
+            :key="'cell-' + i"
+            class="cell">
+            <span v-if="cells[i - 1]">{{ cells[i - 1] }}</span>
+            <span
+              v-else-if="computedCells[i - 1]"
+              class="auto-number">{{ computedCells[i - 1] }}</span>
           </div>
-        </div>
-      </template>
+        </template>
 
-      <template v-else>
-        <div
-          v-for="i in 81"
-          :key="'cell-' + i"
-          class="cell">
-          <span v-if="cells[i - 1]">{{ cells[i - 1] }}</span>
-          <span
-            v-else-if="computedCells[i - 1]"
-            class="auto-answers">{{ computedCells[i - 1] }}</span>
-        </div>
-      </template>
+        <div class="grid-divider col-1"/>
+        <div class="grid-divider col-2"/>
+        <div class="grid-divider row-1"/>
+        <div class="grid-divider row-2"/>
+      </div>
 
-      <div class="grid-divider col-1"/>
-      <div class="grid-divider col-2"/>
-      <div class="grid-divider row-1"/>
-      <div class="grid-divider row-2"/>
+      <div class="themes">
+        <span>Themes</span>
+        <ul>
+          <li
+            :class="{ active: options.theme === 'default'}"
+            @click="setOption({ option: 'theme', value: 'default' })">
+            <span>Default</span>
+          </li>
+          <li
+            :class="{ active: options.theme === 'other' }"
+            @click="setOption({ option: 'theme', value: 'other' })">
+            <span>Other</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="options">
+        <div>Show possible answers in cells</div>
+
+        <label for="showPossibleAnswers-false">No</label>
+        <input
+          id="showPossibleAnswers-true"
+          :value="false"
+          v-model.lazy="showPossibleAnswers"
+          type="radio"
+          name="showPossibleAnswers" >
+        <label for="showPossibleAnswers-true">Yes</label>
+        <input
+          id="showPossibleAnswers-false"
+          :value="true"
+          v-model.lazy="showPossibleAnswers"
+          type="radio"
+          name="showPossibleAnswers" >
+      </div>
     </div>
   </div>
 </template>
@@ -147,34 +150,42 @@ export default {
 
 <!-- Core styling  -->
 <style lang="scss">
+$grid-length: 30rem;
+
+html, body {
+  margin: 0;
+  height: 100vh;
+  font-size: 1.1rem;
+}
+
 #app {
-  margin-left: auto;
-  margin-right: auto;
-  width: 30rem;
+  box-sizing: border-box;
+  height: 100%;
+  overflow-y: auto;
+  padding: 10px 0;
+  width: 100%;
 }
 
 h1 {
+  font-size: 2.7rem;
+  margin-top: 0;
   text-align: center;
 }
 
-.commands {
-  & > * {
-    margin-left: 3px;
-    margin-right: 3px;
-  }
+.content {
+  margin: 0 auto;
+  width: $grid-length;
 }
 
 .grid {
-  border-style: solid;
-  border-width: 4px solid;
+  box-sizing: border-box;
   display: grid;
   grid-gap: 1px;
   grid-template-columns: repeat(9, 1fr);
   grid-template-rows: repeat(9, 1fr);
-  height: 30rem;
-  margin: 1rem auto;
+  height: $grid-length;
   position: relative;
-  width: 100%;
+  width: $grid-length;
 }
 
 .cell {
@@ -201,55 +212,90 @@ h1 {
 
   height: 100%;
   width: 100%;
-}
-.cell-answers-wrapper span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .grid-divider {
   position: absolute;
+
+  &[class *= 'col-'] {
+    top: 0;
+    bottom: 0;
+    width: 3px;
+  }
+  &[class *= 'row-'] {
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+  &.col-1 {
+    left: 33%;
+  }
+  &.col-2 {
+    right: 33%;
+  }
+  &.row-1 {
+    top: 33%;
+  }
+  &.row-2 {
+    bottom: 33%;
+  }
 }
 
-.grid-divider[class *= 'col-'] {
-  top: 0;
-  bottom: 0;
-  width: 3px;
-}
-.grid-divider[class *= 'row-'] {
-  left: 0;
-  right: 0;
-  height: 3px;
-}
-.grid-divider.col-1 {
-  left: 33%;
-}
-.grid-divider.col-2 {
-  right: 33%;
-}
-.grid-divider.row-1 {
-  top: 33%;
-}
-.grid-divider.row-2 {
-  bottom: 33%;
-}
+.themes {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding: 5px 8px;
+  position: relative;
+  width: 100%;
 
-ul.inline {
-  margin-top: 10px;
-  list-style: none;
-  padding: 5px;
+  ul {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    margin: 0;
+    padding-left: 15px;
+  }
 
   li {
-    display: inline-block;
-    margin: 0 0 0 -5px;
-    padding: 0 5px;
+    border-style: solid;
+    border-width: 0 0 0 1px;
+    cursor: pointer;
+    padding: 0 3px;
 
-    &.list-option {
-      border-style: solid;
-      border-width: 0 1px 0 1px;
-      cursor: pointer;
+    &:last-child {
+      border-right-width: 1px;
     }
+  }
+}
+
+.options {
+  border-style: dotted;
+  border-width: 2px 0 0 0;
+  box-sizing: border-box;
+  padding: 5px 8px;
+  position: relative;
+  width: 100%;
+  z-index: 2;
+}
+
+.commands {
+  box-sizing: border-box;
+  padding: 5px 8px;
+  position: relative;
+  width: 100%;
+  z-index: 2;
+
+  & > * {
+    margin-left: 3px;
+    margin-right: 3px;
   }
 }
 
@@ -257,11 +303,11 @@ ul.inline {
 
 <!-- Conditional theme styles -->
 <style lang="scss">
-  .theme-default {
+  #app.theme-default {
     @import './themes/default.scss';
   }
 
-  .theme-other {
+  #app.theme-other {
     @import './themes/other.scss';
   }
 </style>

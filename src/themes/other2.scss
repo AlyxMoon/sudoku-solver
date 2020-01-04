@@ -1,0 +1,16 @@
+// $back-color: #948E70;
+// $back-color-secondary: #191E2800;
+//
+// @use 'default' with (
+//   $cell-color: white,
+//   $back-color: $back-color,
+//   $back-color-secondary: $back-color-secondary,
+// );
+
+// $back-color: #3FB0AC;
+// $back-color-secondary: #191E28BB;
+
+// @at-root #app.theme-other {
+//   background: linear-gradient(45deg, $back-color-secondary 40%, $back-color, $back-color-secondary 100%);
+//   background-color: $back-color-secondary;
+// }
