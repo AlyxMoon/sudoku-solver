@@ -6,6 +6,11 @@ export const setOption = (context, payload) => {
       payload.value = 'default'
     }
   }
+  if (payload.option === 'solveSpeed') {
+    if (!(payload.value in context.state.solveSpeeds)) {
+      payload.value = 'normal'
+    }
+  }
 
   context.commit('SET_OPTION', payload)
 }
@@ -89,17 +94,22 @@ export const togglePause = (context) => {
 export const solveByBruteForce = (context) => {
   context.commit('SET_COMPUTED_CELLS', { cells: context.state.cells.slice() })
 
+  let speed = 0
   let cell = 0
   let diff = 1
-  let timer = window.setInterval(() => {
-    if (context.state.pauseAlgorithm) return
+
+  const iteration = () => {
+    if (context.state.pauseAlgorithm) {
+      return window.setTimeout(iteration, 1000)
+    }
+
     while (cell >= 0 && cell < 81 && context.state.cells[cell]) {
       cell += diff
     }
 
     if (cell < 0 || cell >= 81 || context.state.solving === false) {
-      window.clearInterval(timer)
       context.commit('FINISHED_SOLVING')
+      return
     }
 
     let start = context.state.computedCells[cell] || 1
@@ -116,5 +126,10 @@ export const solveByBruteForce = (context) => {
     }
 
     cell += diff
-  }, 20)
+
+    speed = context.state.solveSpeeds[context.state.options.solveSpeed]
+    window.setTimeout(iteration, speed)
+  }
+
+  iteration()
 }

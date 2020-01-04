@@ -11,10 +11,18 @@ const state = {
   finishedSolving: false,
   pauseAlgorithm: false,
 
+  solveModes: ['brute'],
+  solveSpeeds: {
+    fastest: 0,
+    fast: 30,
+    'kinda slow': 80,
+    'really slow': 1000,
+  },
   themes: ['default', 'dim', 'other'],
   options: {
     showPossibleAnswers: false,
     solveMode: 'brute',
+    solveSpeed: 'fast',
     theme: 'default',
   },
 }
