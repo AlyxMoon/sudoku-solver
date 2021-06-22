@@ -16,6 +16,6 @@ module.exports = {
       }
     }
   },
-  publicPath: './',
+  publicPath: '/sudoku-solver/',
   runtimeCompiler: true,
 }
